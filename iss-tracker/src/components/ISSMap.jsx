@@ -13,7 +13,7 @@ L.Icon.Default.mergeOptions({
 
 
 const issIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/2611/2611810.png',
+  iconUrl: 'https://static.isstracker.pl/images/satellites_icon/4/44/iss-25544.png',
   iconSize: [30, 30],
   iconAnchor: [15, 15],
 });

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import ISSMap from './components/ISSMap';
 import './App.css'
-
+import ObserverLocation from './components/ObserverLocation';
+import ISSCurrentPosition from './components/ISSCurrentPosition';
 function App() {
   const [issPosition, setIssPosition] = useState({
     latitude: 0,
@@ -163,8 +164,7 @@ function App() {
       </div>
     );
   }
-
-  return (
+return (
     <div className="app-container">
       <h1>ISS Tracker</h1>
 
@@ -178,26 +178,14 @@ function App() {
         {/* Left column - Data */}
         <div>
           <div className="data-card">
-            <h2>Current Position</h2>
-            <p><strong>Satellite:</strong> {issTle.info.satname || 'SPACE STATION'} (NORAD: {issTle.info.satid || 25544})</p>
-            <p><strong>Latitude:</strong> {issPosition.latitude.toFixed(6)}°</p>
-            <p><strong>Longitude:</strong> {issPosition.longitude.toFixed(6)}°</p>
-            <p><strong>Altitude:</strong> {issPosition.altitude?.toFixed(2) || '0'} km</p>
-            <p><strong>Time:</strong> {formatTimestamp(issPosition.timestamp)}</p>
-            {issPosition.azimuth && (
-              <>
-                <p><strong>Azimuth:</strong> {issPosition.azimuth.toFixed(2)}°</p>
-                <p><strong>Elevation:</strong> {issPosition.elevation.toFixed(2)}°</p>
-              </>
-            )}
+            <ISSCurrentPosition 
+            issPosition={issPosition} 
+            issTle={issTle} 
+            formatTimestamp={formatTimestamp} 
+          />
           </div>
 
-          <div className="data-card">
-            <h2>Observer Location</h2>
-            <p><strong>Latitude:</strong> {observerLocation.lat.toFixed(6)}</p>
-            <p><strong>Longitude:</strong> {observerLocation.lng.toFixed(6)}</p>
-            <p><strong>Altitude:</strong> {observerLocation.alt.toFixed(0)} meters</p>
-          </div>
+          <ObserverLocation observerLocation={observerLocation} />
         </div>
 
         {/* Right column - Map */}
@@ -219,5 +207,6 @@ function App() {
     </div>
   );
 };
+
 
 export default App
