@@ -26,7 +26,7 @@ const ISSMap = ({ issPosition, observerLocation }) => {
     <MapContainer
       center={issLatLng}
       zoom={3}
-      style={{ height: '500px', width: '100%' }}
+      className="leaflet-container"
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

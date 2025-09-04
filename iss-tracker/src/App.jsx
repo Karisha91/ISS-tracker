@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import ISSMap from './components/ISSMap'; // Import your component
+import ISSMap from './components/ISSMap';
 import './App.css'
 
 function App() {
@@ -157,7 +157,7 @@ function App() {
 
   if (isLoading) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
+      <div className="loading-container">
         <h1>ISS Tracker</h1>
         <p>Loading satellite data...</p>
       </div>
@@ -165,35 +165,19 @@ function App() {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="app-container">
       <h1>ISS Tracker</h1>
 
       {locationError && (
-        <div style={{ 
-          backgroundColor: '#ffebee', 
-          color: '#c62828', 
-          padding: '10px', 
-          borderRadius: '4px',
-          marginBottom: '20px'
-        }}>
+        <div className="error-banner">
           <strong>Location Error:</strong> {locationError}
         </div>
       )}
 
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: '1fr 1fr', 
-        gap: '20px',
-        marginBottom: '20px'
-      }}>
+      <div className="main-grid">
         {/* Left column - Data */}
         <div>
-          <div style={{ 
-            backgroundColor: '#000000ff', 
-            padding: '20px', 
-            borderRadius: '8px',
-            marginBottom: '20px'
-          }}>
+          <div className="data-card">
             <h2>Current Position</h2>
             <p><strong>Satellite:</strong> {issTle.info.satname || 'SPACE STATION'} (NORAD: {issTle.info.satid || 25544})</p>
             <p><strong>Latitude:</strong> {issPosition.latitude.toFixed(6)}°</p>
@@ -208,11 +192,7 @@ function App() {
             )}
           </div>
 
-          <div style={{ 
-            backgroundColor: '#000000ff', 
-            padding: '20px', 
-            borderRadius: '8px' 
-          }}>
+          <div className="data-card">
             <h2>Observer Location</h2>
             <p><strong>Latitude:</strong> {observerLocation.lat.toFixed(6)}</p>
             <p><strong>Longitude:</strong> {observerLocation.lng.toFixed(6)}</p>
@@ -222,32 +202,16 @@ function App() {
 
         {/* Right column - Map */}
         <div>
-          <div style={{ 
-            backgroundColor: '#000000ff', 
-            padding: '20px', 
-            borderRadius: '8px',
-            height: '500px'
-          }}>
+          <div className="map-container">
             <ISSMap issPosition={issPosition} observerLocation={observerLocation} />
           </div>
         </div>
       </div>
 
       {/* TLE Data */}
-      <div style={{ 
-        backgroundColor: '#000000ff', 
-        padding: '20px', 
-        borderRadius: '8px' 
-      }}>
+      <div className="data-card">
         <h2>TLE Data</h2>
-        <p style={{ 
-          fontFamily: 'monospace', 
-          fontSize: '12px', 
-          backgroundColor: '#000000ff', 
-          padding: '10px', 
-          borderRadius: '4px',
-          overflow: 'auto'
-        }}>
+        <p className="tle-text">
           <strong>Line 1:</strong> {issTle.line1 || '1 25544U 98067A   24072.45833333  .00020674  00000-0  37224-3 0  9997'}<br />
           <strong>Line 2:</strong> {issTle.line2 || '2 25544  51.6404  55.9163 0001727  26.6688  64.1273 15.49970316443794'}
         </p>

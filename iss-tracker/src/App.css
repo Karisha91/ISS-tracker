@@ -1,42 +1,163 @@
-#root {
-  max-width: 1280px;
+/* App.css */
+.app-container {
+  padding: 20px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.loading-container {
+  padding: 20px;
   text-align: center;
+  color: #333;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.error-banner {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #c62828;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.data-card {
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.data-card:last-child {
+  margin-bottom: 0;
+}
+
+.data-card h2 {
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 8px;
+}
+
+.data-card p {
+  margin: 8px 0;
+  color: #2c3e50;
+  line-height: 1.5;
+}
+
+.data-card strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.map-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  height: 500px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.tle-text {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  overflow: auto;
+  margin: 0;
+  color: #2c3e50;
+  border: 1px solid #e9ecef;
+  line-height: 1.4;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-grid {
+    grid-template-columns: 1fr;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .map-container {
+    height: 400px;
+  }
+  
+  .app-container {
+    padding: 15px;
+  }
+  
+  .data-card {
+    padding: 18px;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Leaflet map styling */
+.leaflet-container {
+  border-radius: 6px;
+  height: 100%;
+  width: 100%;
 }
 
-.card {
-  padding: 2em;
+/* Header styling */
+.app-container h1 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  font-weight: 300;
 }
 
-.read-the-docs {
-  color: #888;
+/* Optional: Add some animations */
+.data-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.data-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom scrollbar for TLE text */
+.tle-text::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tle-text::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.tle-text::-webkit-scrollbar-thumb {
+  background: #b8c2cc;
+  border-radius: 4px;
+}
+
+.tle-text::-webkit-scrollbar-thumb:hover {
+  background: #8795a1;
+}
+
+/* Status indicators */
+.loading-container p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Improve readability */
+.data-card p {
+  font-size: 14px;
+}
+
+.data-card h2 {
+  font-size: 1.4rem;
 }
