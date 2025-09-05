@@ -4,6 +4,8 @@ import './App.css'
 import ObserverLocation from './components/ObserverLocation';
 import ISSCurrentPosition from './components/ISSCurrentPosition';
 import TLEData from './components/TLEData';
+import { useISSOrbit } from './hooks/useISSOrbit'; // Add this import
+
 function App() {
   const [issPosition, setIssPosition] = useState({
     latitude: 0,
@@ -24,6 +26,8 @@ function App() {
   });
   const [locationError, setLocationError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+
+  const { orbitPath } = useISSOrbit(issTle);
 
   const getUserLocation = () => {
     return new Promise((resolve) => {
@@ -89,7 +93,7 @@ function App() {
           azimuth: position.azimuth,
           elevation: position.elevation
         });
-        console.log('Position updated:', position.satlatitude, position.satlongitude);
+        
       }
     } catch (error) {
       console.error('Error fetching ISS position:', error);
@@ -192,7 +196,12 @@ return (
         {/* Right column - Map */}
         <div>
           <div className="map-container">
-            <ISSMap issPosition={issPosition} observerLocation={observerLocation} />
+            {/* Pass orbitPath to ISSMap */}
+            <ISSMap 
+              issPosition={issPosition} 
+              observerLocation={observerLocation} 
+              orbitPath={orbitPath}
+            />
           </div>
         </div>
       </div>

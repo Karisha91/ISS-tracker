@@ -1,8 +1,7 @@
 // src/components/ISSMap.jsx
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -11,14 +10,13 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-
 const issIcon = new L.Icon({
   iconUrl: 'https://static.isstracker.pl/images/satellites_icon/4/44/iss-25544.png',
   iconSize: [30, 30],
   iconAnchor: [15, 15],
 });
 
-const ISSMap = ({ issPosition, observerLocation }) => {
+const ISSMap = ({ issPosition, observerLocation, orbitPath = [] }) => {
   const issLatLng = [issPosition.latitude, issPosition.longitude];
   const observerLatLng = [observerLocation.lat, observerLocation.lng];
 
@@ -33,7 +31,7 @@ const ISSMap = ({ issPosition, observerLocation }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       
-      
+      {/* ISS Marker */}
       <Marker position={issLatLng} icon={issIcon}>
         <Popup>
           <strong>ISS Current Position</strong><br />
@@ -43,7 +41,7 @@ const ISSMap = ({ issPosition, observerLocation }) => {
         </Popup>
       </Marker>
 
-      
+      {/* Observer Location */}
       <Marker position={observerLatLng}>
         <Popup>
           <strong>Your Location</strong><br />
@@ -53,10 +51,21 @@ const ISSMap = ({ issPosition, observerLocation }) => {
         </Popup>
       </Marker>
 
-      
+      {/* Orbit Path */}
+      {orbitPath.length > 0 && (
+        <Polyline
+          positions={orbitPath}
+          color="blue"
+          weight={1}
+          opacity={0.6}
+          dashArray="3, 3"
+        />
+      )}
+
+      {/* Visibility circle */}
       <Circle
         center={observerLatLng}
-        radius={1000000} // 1000km in meters
+        radius={1000000}
         color="blue"
         fillOpacity={0.1}
       />
