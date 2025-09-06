@@ -16,7 +16,7 @@ const issIcon = new L.Icon({
   iconAnchor: [15, 15],
 });
 
-const ISSMap = ({ issPosition, observerLocation, orbitPath = [] }) => {
+const ISSMap = ({ issPosition, observerLocation, orbitPath = [], isVisible }) => {
   const issLatLng = [issPosition.latitude, issPosition.longitude];
   const observerLatLng = [observerLocation.lat, observerLocation.lng];
 
@@ -48,6 +48,7 @@ const ISSMap = ({ issPosition, observerLocation, orbitPath = [] }) => {
           Lat: {observerLocation.lat.toFixed(4)}°<br />
           Lng: {observerLocation.lng.toFixed(4)}°<br />
           Alt: {observerLocation.alt} meters
+          <strong>ISS Visibility:</strong> {isVisible ? '🔭 Visible Now!' : '🌌 Not Visible'}
         </Popup>
       </Marker>
 

@@ -5,7 +5,7 @@ import ObserverLocation from './components/ObserverLocation';
 import ISSCurrentPosition from './components/ISSCurrentPosition';
 import TLEData from './components/TLEData';
 import { useISSOrbit } from './hooks/useISSOrbit'; // Add this import
-
+import VisibilityStatus from './components/VisibilityStatus';
 function App() {
   const [issPosition, setIssPosition] = useState({
     latitude: 0,
@@ -27,15 +27,20 @@ function App() {
   const [locationError, setLocationError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  const { orbitPath } = useISSOrbit(issTle);
+  const { orbitPath, isVisible } = useISSOrbit(issTle, observerLocation);
 
   const getUserLocation = () => {
+    const forcedLocation = {
+  lat: -22.828,   // CURRENT ISS latitude from your data
+  lng: -71.237,    // CURRENT ISS longitude from your data (POSITIVE for East!)
+  alt: 0
+};
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
         setLocationError('Geolocation is not supported by this browser');
         const defaultLocation = {
-          lat: 41.702,
-          lng: -76.014,
+          lat: 42.769,
+          lng: 146.096,
           alt: 0
         };
         setObserverLocation(defaultLocation);
@@ -45,12 +50,13 @@ function App() {
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          
           const newLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
             alt: position.coords.altitude || 0
           };
-          setObserverLocation(newLocation);
+          setObserverLocation(forcedLocation);
           setLocationError('');
           resolve(newLocation);
         },
@@ -182,25 +188,28 @@ return (
       <div className="main-grid">
         {/* Left column - Data */}
         <div>
-          <div className="data-card">
-            <ISSCurrentPosition 
-            issPosition={issPosition} 
-            issTle={issTle} 
-            formatTimestamp={formatTimestamp} 
-          />
-          </div>
+  <div className="data-card">
+    <VisibilityStatus isVisible={isVisible} />
+    <ISSCurrentPosition 
+      issPosition={issPosition} 
+      issTle={issTle} 
+      formatTimestamp={formatTimestamp} 
+      observerLocation={observerLocation} // ← ADD THIS LINE
+    />
+  </div>
 
-          <ObserverLocation observerLocation={observerLocation} />
-        </div>
+  <ObserverLocation observerLocation={observerLocation} />
+</div>
 
         {/* Right column - Map */}
         <div>
           <div className="map-container">
-            {/* Pass orbitPath to ISSMap */}
+            
             <ISSMap 
               issPosition={issPosition} 
               observerLocation={observerLocation} 
               orbitPath={orbitPath}
+              isVisible={isVisible}
             />
           </div>
         </div>
