@@ -4,8 +4,9 @@ import './App.css'
 import ObserverLocation from './components/ObserverLocation';
 import ISSCurrentPosition from './components/ISSCurrentPosition';
 import TLEData from './components/TLEData';
-import { useISSOrbit } from './hooks/useISSOrbit'; // Add this import
+import { useISSOrbit } from './hooks/useISSOrbit';
 import VisibilityStatus from './components/VisibilityStatus';
+
 function App() {
   const [issPosition, setIssPosition] = useState({
     latitude: 0,
@@ -18,6 +19,7 @@ function App() {
     lng: 0,
     alt: 0
   });
+  const [realElevation, setRealElevation] = useState(0);
   const [issTle, setIssTle] = useState({
     raw: '',
     line1: '',
@@ -29,12 +31,62 @@ function App() {
 
   const { orbitPath, isVisible } = useISSOrbit(issTle, observerLocation);
 
+  // Function to calculate elevation
+  const calculateRealElevation = (issPos, obsLoc) => {
+    if (!obsLoc || !issPos ||
+      typeof obsLoc.lat !== 'number' ||
+      typeof obsLoc.lng !== 'number' ||
+      typeof issPos.latitude !== 'number' ||
+      typeof issPos.longitude !== 'number') {
+      return 0;
+    }
+
+    // Convert degrees to radians
+    const toRadians = (degrees) => degrees * (Math.PI / 180);
+    const toDegrees = (radians) => radians * (180 / Math.PI);
+
+    // Earth's radius in km
+    const R = 6371;
+
+    // Observer position (convert to radians)
+    const φ1 = toRadians(obsLoc.lat);
+    const λ1 = toRadians(obsLoc.lng);
+    const h1 = 0; // Observer altitude (sea level)
+
+    // ISS position (convert to radians)
+    const φ2 = toRadians(issPos.latitude);
+    const λ2 = toRadians(issPos.longitude);
+    const h2 = issPos.altitude || 420; // ISS altitude in km (default to 420km)
+
+    // Calculate differences
+    const Δφ = φ2 - φ1;
+    const Δλ = λ2 - λ1;
+
+    // Haversine formula for great-circle distance
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) *
+      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance along Earth's surface in km
+
+    // Calculate the straight-line distance between observer and ISS
+    const straightDistance = Math.sqrt(R * R + (R + h2) * (R + h2) - 2 * R * (R + h2) * Math.cos(c));
+
+    // Calculate elevation angle using trigonometry
+    const elevationRad = Math.asin(((R + h2) * Math.cos(c) - R) / straightDistance);
+    const elevationDeg = toDegrees(elevationRad);
+
+    return Math.max(-90, Math.min(90, elevationDeg));
+  };
+
   const getUserLocation = () => {
     const forcedLocation = {
-  lat: -22.828,   // CURRENT ISS latitude from your data
-  lng: -71.237,    // CURRENT ISS longitude from your data (POSITIVE for East!)
-  alt: 0
-};
+      lat:  44.599,
+      lng: -158.873550,
+      alt: 0
+    };
+    
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
         setLocationError('Geolocation is not supported by this browser');
@@ -50,7 +102,6 @@ function App() {
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          
           const newLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
@@ -99,12 +150,11 @@ function App() {
           azimuth: position.azimuth,
           elevation: position.elevation
         });
-        
       }
     } catch (error) {
       console.error('Error fetching ISS position:', error);
     }
-  }
+  };
 
   const fetchTLEData = async () => {
     const proxyUrl = 'https://corsproxy.io/?';
@@ -140,7 +190,15 @@ function App() {
     } catch (error) {
       console.error('Error fetching TLE data:', error);
     }
-  }
+  };
+
+  // Update elevation when ISS position or observer location changes
+  useEffect(() => {
+    if (issPosition && observerLocation) {
+      const elevation = calculateRealElevation(issPosition, observerLocation);
+      setRealElevation(elevation);
+    }
+  }, [issPosition, observerLocation]);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -175,7 +233,8 @@ function App() {
       </div>
     );
   }
-return (
+
+  return (
     <div className="app-container">
       <h1>ISS Tracker</h1>
 
@@ -188,23 +247,26 @@ return (
       <div className="main-grid">
         {/* Left column - Data */}
         <div>
-  <div className="data-card">
-    <VisibilityStatus isVisible={isVisible} />
-    <ISSCurrentPosition 
-      issPosition={issPosition} 
-      issTle={issTle} 
-      formatTimestamp={formatTimestamp} 
-      observerLocation={observerLocation} // ← ADD THIS LINE
-    />
-  </div>
+          <div className="data-card">
+            <VisibilityStatus 
+              isVisible={isVisible}
+              elevation={realElevation} 
+            />
+            <ISSCurrentPosition 
+              issPosition={issPosition} 
+              issTle={issTle} 
+              formatTimestamp={formatTimestamp} 
+              observerLocation={observerLocation}
+              realElevation={realElevation} // Pass elevation to ISSCurrentPosition
+            />
+          </div>
 
-  <ObserverLocation observerLocation={observerLocation} />
-</div>
+          <ObserverLocation observerLocation={observerLocation} />
+        </div>
 
         {/* Right column - Map */}
         <div>
           <div className="map-container">
-            
             <ISSMap 
               issPosition={issPosition} 
               observerLocation={observerLocation} 
@@ -219,7 +281,6 @@ return (
       <TLEData issTle={issTle}></TLEData>
     </div>
   );
-};
+}
 
-
-export default App
+export default App;
