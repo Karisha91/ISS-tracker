@@ -82,8 +82,8 @@ function App() {
 
   const getUserLocation = () => {
     const forcedLocation = {
-      lat:  44.599,
-      lng: -158.873550,
+      lat:  32.266,
+      lng: -85.896,
       alt: 0
     };
     

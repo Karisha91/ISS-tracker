@@ -57,7 +57,7 @@ const checkCurrentVisibility = useCallback((satrec, observerLat, observerLng, ob
   try {
     const now = new Date();
     
-    // Simple distance-based visibility
+    // Get ISS position
     const positionAndVelocity = satellite.propagate(satrec, now);
     if (!positionAndVelocity.position) return false;
 
@@ -66,17 +66,42 @@ const checkCurrentVisibility = useCallback((satrec, observerLat, observerLng, ob
     
     const issLat = satellite.degreesLat(positionGd.latitude);
     const issLng = satellite.degreesLong(positionGd.longitude);
+    const issAlt = positionGd.height; // altitude in km
     
-    // Calculate angular distance
-    const latDiff = Math.abs(issLat - observerLat);
-    const lngDiff = Math.abs(issLng - observerLng);
-    const distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+    // Convert to radians
+    const toRadians = (degrees) => degrees * (Math.PI / 180);
     
-    console.log('📏 Angular distance:', distance.toFixed(2) + '°');
+    // Observer position in radians
+    const φ1 = toRadians(observerLat);
+    const λ1 = toRadians(observerLng);
     
-    // If within 2 degrees, consider it visible
-    // (This is an approximation, but it works)
-    return distance < 2.0;
+    // ISS position in radians
+    const φ2 = toRadians(issLat);
+    const λ2 = toRadians(issLng);
+    
+    // Earth's radius in km
+    const R = 6371;
+    
+    // Calculate angular distance using Haversine formula
+    const Δφ = φ2 - φ1;
+    const Δλ = λ2 - λ1;
+    
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    
+    // Calculate elevation angle
+    const straightDistance = Math.sqrt(R * R + (R + issAlt) * (R + issAlt) - 2 * R * (R + issAlt) * Math.cos(c));
+    const elevationRad = Math.asin(((R + issAlt) * Math.cos(c) - R) / straightDistance);
+    const elevationDeg = elevationRad * (180 / Math.PI);
+    
+    console.log('📏 Elevation angle:', elevationDeg.toFixed(2) + '°');
+    
+    // ISS is typically visible when >5-10° above horizon
+    // (depending on atmospheric conditions and brightness)
+    return elevationDeg > 5.0;
 
   } catch (error) {
     console.error('❌ Error:', error);
