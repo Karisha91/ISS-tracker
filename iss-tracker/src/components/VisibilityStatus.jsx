@@ -1,110 +1,131 @@
-
 import React from 'react';
 import AzimuthGuide from './AzimuthGuide';
 import ElevationGuide from './ElevationGuide'; 
 import { getSimpleDirection, getArrowIcon } from '../utils/directionUtils';
 import CurrentElevation from './CurrentElevation';
+import './VisibilityStatus.css';
 
 const VisibilityStatus = ({ isVisible, issPosition, elevation }) => {
-  // Function to determine which elevation range is active
-  const getElevationStatus = () => {
-    if (elevation < 5) return 0;
-    if (elevation < 30) return 5;
-    if (elevation < 60) return 30;
-    if (elevation < 75) return 60;
-    if (elevation < 90) return 75;
-    return 90;
-  };
-
-  const activeElevation = getElevationStatus();
   const direction = getSimpleDirection(issPosition?.azimuth);
   const arrowIcon = getArrowIcon(issPosition?.azimuth);
+  const azimuthValue = issPosition?.azimuth?.toFixed(1);
 
-  // Function to highlight the active elevation
-  const getElevationStyle = (value) => {
-    const isActive = activeElevation === value;
-    return {
-      fontWeight: isActive ? 'bold' : 'normal',
-      color: isActive ? '#e74c3c' : 'inherit',
-      backgroundColor: isActive ? '#fff3cd' : 'transparent',
-      padding: isActive ? '2px 5px' : '0',
-      borderRadius: isActive ? '4px' : '0'
-    };
-  };
+  // Visibility information
+  const visibilityInfo = isVisible 
+    ? {
+        title: '🔭 ISS IS VISIBLE NOW!',
+        subtitle: `Look ${direction}! ${arrowIcon} You might see it!`,
+        bgColor: '#d5f4e6',
+        color: '#27ae60'
+      }
+    : {
+        title: '🌌 ISS Not Currently Visible',
+        subtitle: 'Wait for the next pass to see the International Space Station',
+        bgColor: '#fadbd8',
+        color: '#e74c3c'
+      };
 
-  // Get the appropriate look direction message
-  const getLookDirectionMessage = () => {
-    if (!issPosition?.azimuth) return 'Look up! You might see it!';
-    
-    return `Look ${direction}! ${arrowIcon} You might see it!`;
-  };
+  // Quick stats data
+  const stats = [
+    {
+      icon: '📊',
+      label: 'Current Elevation',
+      value: `${elevation.toFixed(1)}°`
+    },
+    ...(issPosition?.azimuth ? [{
+      icon: '🧭',
+      label: 'Direction',
+      value: `${direction} ${arrowIcon}`
+    }] : []),
+    {
+      icon: '👀',
+      label: 'Visibility',
+      value: isVisible ? 'Visible' : 'Not Visible'
+    }
+  ];
+
+  // Viewing tips (only shown when visible)
+  const viewingTips = isVisible ? [
+    { icon: '🌑', text: 'Find a dark location away from city lights' },
+    { icon: '👀', text: 'No telescope needed - visible to naked eye' },
+    { icon: '⏱️', text: 'Typically visible for 2-6 minutes' },
+    { icon: '📱', text: 'Use the direction guide to know where to look' }
+  ] : [];
 
   return (
-    <div className="data-card">
+    <div className="visibility-status-card">
       <h2>Visibility Status</h2>
       
       {/* Main visibility indicator */}
-      <div style={{
-        color: isVisible ? '#27ae60' : '#e74c3c',           
-        fontWeight: 'bold', 
-        fontSize: '1.2rem',                                
-        textAlign: 'center',                               
-        padding: '15px',                                   
-        backgroundColor: isVisible ? '#d5f4e6' : '#fadbd8', 
-        borderRadius: '8px',                               
-        marginBottom: '20px'                               
-      }}>
-        {/* Display different message based on visibility */}
-        {isVisible ? '🔭 ISS IS VISIBLE NOW!' : '🌌 ISS Not Currently Visible'}
+      <div 
+        className="visibility-banner"
+        style={{
+          backgroundColor: visibilityInfo.bgColor,
+          color: visibilityInfo.color
+        }}
+      >
+        <div className="visibility-title">{visibilityInfo.title}</div>
+        <div className="visibility-subtitle">{visibilityInfo.subtitle}</div>
         
-        {/* Additional info if visible */}
-        {isVisible && (
-          <div style={{ 
-            fontSize: '1rem',     
-            marginTop: '8px'      
-          }}>
-            {getLookDirectionMessage()}
-            {issPosition?.azimuth && (
-              <div style={{
-                fontSize: '0.8rem',
-                marginTop: '5px',
-                color: '#2c3e50'
-              }}>
-                (Azimuth: {issPosition.azimuth.toFixed(1)}°)
-              </div>
-            )}
+        {isVisible && azimuthValue && (
+          <div className="azimuth-detail">
+            Azimuth: {azimuthValue}° {arrowIcon}
           </div>
         )}
       </div>
 
-      {/* Use the new CurrentElevation component */}
+      {/* Current Elevation
       <CurrentElevation 
         elevation={elevation} 
         azimuth={issPosition?.azimuth} 
-      />
-      
+      /> */}
 
-      {/* Explanation of what visibility means */}
-      <div style={{ 
-        fontSize: '0.9rem', 
-        color: '#666',
-        textAlign: 'center',
-        marginBottom: '20px'
-      }}>
-        <p>
-          <strong>Visibility means:</strong> ISS is more than 5° above your horizon 
-          and might be visible to the naked eye.
-        </p>
-        <p>
-          The ISS orbits west to east, but currently look {getSimpleDirection(issPosition?.azimuth)} {getArrowIcon(issPosition?.azimuth)}
-        </p>
+      {/* Quick Stats */}
+      <div className="quick-stats">
+        {stats.map((stat, index) => (
+          <div key={index} className="stat-item">
+            <span className="stat-icon">{stat.icon}</span>
+            <span className="stat-label">{stat.label}</span>
+            <span className="stat-value">{stat.value}</span>
+          </div>
+        ))}
       </div>
 
-      {/* Use the new ElevationGuide component */}
-      <ElevationGuide currentElevation={elevation} />
+      {/* Educational Content */}
+      <div className="educational-content">
+        <h3>About ISS Visibility</h3>
+        <p>
+          The International Space Station is visible when it's <strong>more than 5° above the horizon </strong> 
+          and reflects sunlight while your location is in darkness.
+        </p>
+        <ul>
+          <li>🛰️ Orbits at 400 km altitude</li>
+          <li>⚡ Travels at 27,600 km/h</li>
+          <li>🌍 Circles Earth every 90 minutes</li>
+          <li>✨ Appears as a bright, fast-moving star</li>
+        </ul>
+      </div>
 
-      {/* Use the AzimuthGuide component */}
-      <AzimuthGuide azimuth={issPosition?.azimuth} />
+      {/* Guides */}
+      <div className="guides-container">
+        <ElevationGuide currentElevation={elevation} />
+        <AzimuthGuide azimuth={issPosition?.azimuth} />
+      </div>
+
+      {/* Viewing Tips */}
+      {viewingTips.length > 0 && (
+        <div className="viewing-tips">
+          <h3>🔭 Viewing Tips</h3>
+          <div className="tips-grid">
+            {viewingTips.map((tip, index) => (
+              <div key={index} className="tip">
+                <span className="tip-icon">{tip.icon}</span>
+                <span>{tip.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

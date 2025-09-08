@@ -7,6 +7,8 @@ import TLEData from './components/TLEData';
 import { useISSOrbit } from './hooks/useISSOrbit';
 import VisibilityStatus from './components/VisibilityStatus';
 import { calculateRealElevation } from './utils/elevationUtils'; // Import the utility
+import PassPredictions from './components/PassPredictions';
+
 
 function App() {
   const [issPosition, setIssPosition] = useState({
@@ -30,23 +32,23 @@ function App() {
   const [locationError, setLocationError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  const { orbitPath, isVisible } = useISSOrbit(issTle, observerLocation);
+  const { orbitPath, isVisible, satrec } = useISSOrbit(issTle, observerLocation);
 
-  
+
 
   const getUserLocation = () => {
     const forcedLocation = {
-      lat:  -27.65,
-      lng: 87.2799,
+      lat: 5.1521,
+      lng: 46.199,
       alt: 0
     };
-    
+
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
         setLocationError('Geolocation is not supported by this browser');
         const defaultLocation = {
-          lat: 42.769,
-          lng: 146.096,
+          lat: -45.86413,
+          lng: -67.49656,
           alt: 0
         };
         setObserverLocation(defaultLocation);
@@ -61,7 +63,7 @@ function App() {
             lng: position.coords.longitude,
             alt: position.coords.altitude || 0
           };
-          setObserverLocation(forcedLocation);
+          setObserverLocation(newLocation);
           setLocationError('');
           resolve(newLocation);
         },
@@ -72,7 +74,7 @@ function App() {
             lng: -76.014,
             alt: 0
           };
-          setObserverLocation(defaultLocation);
+          setObserverLocation(deultLocation);
           resolve(defaultLocation);
         },
         {
@@ -202,26 +204,37 @@ function App() {
         {/* Left column - Visibility Status */}
         <div>
           <div className="data-card">
-            <VisibilityStatus 
+            <VisibilityStatus
               isVisible={isVisible}
-              elevation={realElevation} 
+              elevation={realElevation}
               issPosition={issPosition}
             />
           </div>
+          <PassPredictions
+            satrec={satrec}
+            observerLocation={observerLocation}
+          />
+          {/* Add PassPredictions component here
+          <div className="data-card">
+            <PassPredictions
+              satrec={satrec}
+              observerLocation={observerLocation}
+            />
+          </div> */}
         </div>
 
         {/* Middle column - ISS Position and Observer Location */}
         <div>
           <div className="data-card">
-            <ISSCurrentPosition 
-              issPosition={issPosition} 
-              issTle={issTle} 
-              formatTimestamp={formatTimestamp} 
+            <ISSCurrentPosition
+              issPosition={issPosition}
+              issTle={issTle}
+              formatTimestamp={formatTimestamp}
               observerLocation={observerLocation}
               realElevation={realElevation}
             />
           </div>
-          
+
           <div className="data-card">
             <ObserverLocation observerLocation={observerLocation} />
           </div>
@@ -230,9 +243,9 @@ function App() {
         {/* Right column - Map */}
         <div>
           <div className="map-container">
-            <ISSMap 
-              issPosition={issPosition} 
-              observerLocation={observerLocation} 
+            <ISSMap
+              issPosition={issPosition}
+              observerLocation={observerLocation}
               orbitPath={orbitPath}
               isVisible={isVisible}
             />
