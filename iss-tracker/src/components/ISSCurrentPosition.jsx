@@ -73,7 +73,7 @@ const ISSCurrentPosition = ({ issPosition, issTle, formatTimestamp, observerLoca
       <div>
         <h3>🔭 About ISS Visibility</h3>
         <p>
-          The International Space Station is visible when it's <strong>more than 5° above the horizon</strong> 
+          The International Space Station is visible when it's <strong>more than 5° above the horizon </strong> 
           and reflects sunlight while your location is in darkness.
         </p>
         <ul>

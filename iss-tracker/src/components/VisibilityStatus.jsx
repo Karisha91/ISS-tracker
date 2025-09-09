@@ -1,6 +1,6 @@
 import React from 'react';
 import AzimuthGuide from './AzimuthGuide';
-import ElevationGuide from './ElevationGuide'; 
+import ElevationGuide from './ElevationGuide';
 import { getSimpleDirection, getArrowIcon } from '../utils/directionUtils';
 import './VisibilityStatus.css';
 
@@ -10,19 +10,19 @@ const VisibilityStatus = ({ isVisible, issPosition, elevation }) => {
   const azimuthValue = issPosition?.azimuth?.toFixed(1);
 
   // Visibility information
-  const visibilityInfo = isVisible 
+  const visibilityInfo = isVisible
     ? {
-        title: '🔭 ISS IS VISIBLE NOW!',
-        subtitle: `Look ${direction}! ${arrowIcon} You might see it!`,
-        bgColor: '#d5f4e6',
-        color: '#27ae60'
-      }
+      title: '🔭 ISS IS VISIBLE NOW!',
+      subtitle: `Look ${direction}! ${arrowIcon} You might see it!`,
+      bgColor: '#d5f4e6',
+      color: '#27ae60'
+    }
     : {
-        title: '🌌 ISS Not Currently Visible',
-        subtitle: 'Wait for the next pass to see the International Space Station',
-        bgColor: '#fadbd8',
-        color: '#e74c3c'
-      };
+      title: '🌌 ISS Not Currently Visible',
+      subtitle: 'Wait for the next pass to see the International Space Station',
+      bgColor: '#fadbd8',
+      color: '#e74c3c'
+    };
 
   // Quick stats data
   const stats = [
@@ -54,9 +54,9 @@ const VisibilityStatus = ({ isVisible, issPosition, elevation }) => {
   return (
     <div className="visibility-status-card">
       <h2>Visibility Status</h2>
-      
+
       {/* Main visibility indicator */}
-      <div 
+      <div
         className="visibility-banner"
         style={{
           backgroundColor: visibilityInfo.bgColor,
@@ -65,7 +65,7 @@ const VisibilityStatus = ({ isVisible, issPosition, elevation }) => {
       >
         <div className="visibility-title">{visibilityInfo.title}</div>
         <div className="visibility-subtitle">{visibilityInfo.subtitle}</div>
-        
+
         {isVisible && azimuthValue && (
           <div className="azimuth-detail">
             Azimuth: {azimuthValue}° {arrowIcon}
@@ -84,11 +84,12 @@ const VisibilityStatus = ({ isVisible, issPosition, elevation }) => {
         ))}
       </div>
 
-      {/* Guides */}
-      <div className="guides-container">
-        
-        <AzimuthGuide azimuth={issPosition?.azimuth} />
-      </div>
+      {/* Guides - only show if visible */}
+      {isVisible && (
+        <div className="guides-container">
+          <AzimuthGuide azimuth={issPosition?.azimuth} />
+        </div>
+      )}
 
       {/* Viewing Tips */}
       {viewingTips.length > 0 && (

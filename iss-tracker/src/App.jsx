@@ -8,7 +8,7 @@ import { useISSOrbit } from './hooks/useISSOrbit';
 import VisibilityStatus from './components/VisibilityStatus';
 import { calculateRealElevation } from './utils/elevationUtils'; // Import the utility
 import PassPredictions from './components/PassPredictions';
-
+import YouTubeLive from './components/YouTubeLive.jsx';
 
 function App() {
   const [issPosition, setIssPosition] = useState({
@@ -38,8 +38,8 @@ function App() {
 
   const getUserLocation = () => {
     const forcedLocation = {
-      lat: 5.1521,
-      lng: 46.199,
+      lat: 16.463,
+      lng: 107.590,
       alt: 0
     };
 
@@ -63,7 +63,7 @@ function App() {
             lng: position.coords.longitude,
             alt: position.coords.altitude || 0
           };
-          setObserverLocation(newLocation);
+          setObserverLocation(forcedLocation);
           setLocationError('');
           resolve(newLocation);
         },
@@ -243,6 +243,9 @@ function App() {
               orbitPath={orbitPath}
               isVisible={isVisible}
             />
+          </div>
+          <div style={{ marginTop: '20px' }}>
+            <YouTubeLive />
           </div>
         </div>
       </div>
