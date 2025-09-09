@@ -2,7 +2,6 @@ import React from 'react';
 import AzimuthGuide from './AzimuthGuide';
 import ElevationGuide from './ElevationGuide'; 
 import { getSimpleDirection, getArrowIcon } from '../utils/directionUtils';
-import CurrentElevation from './CurrentElevation';
 import './VisibilityStatus.css';
 
 const VisibilityStatus = ({ isVisible, issPosition, elevation }) => {
@@ -74,12 +73,6 @@ const VisibilityStatus = ({ isVisible, issPosition, elevation }) => {
         )}
       </div>
 
-      {/* Current Elevation
-      <CurrentElevation 
-        elevation={elevation} 
-        azimuth={issPosition?.azimuth} 
-      /> */}
-
       {/* Quick Stats */}
       <div className="quick-stats">
         {stats.map((stat, index) => (
@@ -91,24 +84,9 @@ const VisibilityStatus = ({ isVisible, issPosition, elevation }) => {
         ))}
       </div>
 
-      {/* Educational Content */}
-      <div className="educational-content">
-        <h3>About ISS Visibility</h3>
-        <p>
-          The International Space Station is visible when it's <strong>more than 5° above the horizon </strong> 
-          and reflects sunlight while your location is in darkness.
-        </p>
-        <ul>
-          <li>🛰️ Orbits at 400 km altitude</li>
-          <li>⚡ Travels at 27,600 km/h</li>
-          <li>🌍 Circles Earth every 90 minutes</li>
-          <li>✨ Appears as a bright, fast-moving star</li>
-        </ul>
-      </div>
-
       {/* Guides */}
       <div className="guides-container">
-        <ElevationGuide currentElevation={elevation} />
+        
         <AzimuthGuide azimuth={issPosition?.azimuth} />
       </div>
 

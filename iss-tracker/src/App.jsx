@@ -214,13 +214,7 @@ function App() {
             satrec={satrec}
             observerLocation={observerLocation}
           />
-          {/* Add PassPredictions component here
-          <div className="data-card">
-            <PassPredictions
-              satrec={satrec}
-              observerLocation={observerLocation}
-            />
-          </div> */}
+          
         </div>
 
         {/* Middle column - ISS Position and Observer Location */}
@@ -252,9 +246,6 @@ function App() {
           </div>
         </div>
       </div>
-
-      {/* TLE Data */}
-      <TLEData issTle={issTle}></TLEData>
     </div>
   );
 }
