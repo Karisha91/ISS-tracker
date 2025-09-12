@@ -100,7 +100,7 @@ export const useISSOrbit = (issTle, observerLocation) => {
       
       
       
-      // ISS is typically visible when >5-10° above horizon
+      // ISS is typically visible when 10° above horizon
       return elevationDeg > 10;
 
     } catch (error) {
@@ -145,7 +145,7 @@ export const useISSOrbit = (issTle, observerLocation) => {
         observerLocation.alt
       );
       setIsVisible(visible);
-    }, 5000); // Check every 10 seconds
+    }, 5000); // Check every 5 seconds
     
     // Clean up interval on unmount
     return () => clearInterval(intervalId);

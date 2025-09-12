@@ -51,7 +51,7 @@ const themes = {
 };
 
 const ISSMap = ({ issPosition, observerLocation, orbitPath = [], isVisible }) => {
-  const [currentTheme, setCurrentTheme] = useState('standard');
+  const [currentTheme, setCurrentTheme] = useState('satellite');
   const issLatLng = [issPosition.latitude, issPosition.longitude];
   const observerLatLng = [observerLocation.lat, observerLocation.lng];
 
@@ -118,8 +118,8 @@ const ISSMap = ({ issPosition, observerLocation, orbitPath = [], isVisible }) =>
         {orbitPath.length > 0 && (
           <Polyline
             positions={orbitPath}
-            color={currentTheme === 'dark' ? '#fa6060ff' : '#eb2525ff'}
-            weight={1}
+            color={currentTheme === 'satellite' ? '#f0fa60ff' : '#eb2525ff'}
+            weight={2}
             opacity={0.7}
           />
         )}
@@ -131,7 +131,7 @@ const ISSMap = ({ issPosition, observerLocation, orbitPath = [], isVisible }) =>
           color={isVisible ? '#10b981' : '#ef4444'}
           fillColor={isVisible ? '#10b981' : '#ef4444'}
           fillOpacity={0.1}
-          weight={1.5}
+          weight={2}
         />
       </MapContainer>
     </div>

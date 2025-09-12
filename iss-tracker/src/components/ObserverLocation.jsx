@@ -34,14 +34,12 @@ const ObserverLocation = ({ observerLocation }) => {
     }
   }, [observerLocation.lat, observerLocation.lng]);
 
-  // Get compass direction from coordinates - FIXED
+  // Get compass direction from coordinates
   const getHemisphere = (coord, type) => {
     if (type === 'lat') {
-      const dir = coord >= 0 ? 'N' : 'S';
-      return `${Math.abs(coord).toFixed(2)}°${dir}`;
+      return coord >= 0 ? 'N' : 'S';
     } else if (type === 'lng') {
-      const dir = coord >= 0 ? 'E' : 'W';
-      return `${Math.abs(coord).toFixed(2)}°${dir}`;
+      return coord >= 0 ? 'E' : 'W';
     }
     return '';
   };
@@ -54,87 +52,69 @@ const ObserverLocation = ({ observerLocation }) => {
 
   return (
     <div className="observer-location-card">
-      <h2>📍 Observer Location</h2>
+      <h2>Observer Location</h2>
+      <p className="location-subtitle">Your current observation point</p>
       
-      {/* Location Name */}
-      <div className="location-header">
-        <div className="location-name">
-          {isLoading ? (
-            <div className="loading-text">Loading location...</div>
-          ) : (
+      {isLoading ? (
+        <div className="loading-location">
+          <p>Loading location data...</p>
+        </div>
+      ) : (
+        <>
+          <div className="location-header">
             <h3>{locationName}</h3>
-          )}
-        </div>
-      </div>
+          </div>
 
-      {/* Coordinates in a nice grid */}
-      <div className="coordinates-grid">
-        <div className="coordinate-item">
-          <div className="coordinate-label">
-            <span className="coordinate-icon">🌐</span>
-            Latitude
-          </div>
-          <div className="coordinate-value">
-            {observerLocation.lat.toFixed(6)}
-          </div>
-          <div className="coordinate-dms">
-            {getHemisphere(observerLocation.lat, 'lat')}
-          </div>
-        </div>
+          <div className="coordinates-grid">
+            <div className="coordinate-item">
+              <div className="coordinate-detail">
+                <span className="detail-label">Latitude</span>
+                <span className="detail-value">
+                  {Math.abs(observerLocation.lat).toFixed(6)}° {getHemisphere(observerLocation.lat, 'lat')}
+                </span>
+              </div>
+            </div>
 
-        <div className="coordinate-item">
-          <div className="coordinate-label">
-            <span className="coordinate-icon">🌐</span>
-            Longitude
-          </div>
-          <div className="coordinate-value">
-            {observerLocation.lng.toFixed(6)}
-          </div>
-          <div className="coordinate-dms">
-            {getHemisphere(observerLocation.lng, 'lng')}
-          </div>
-        </div>
+            <div className="coordinate-item">
+              <div className="coordinate-detail">
+                <span className="detail-label">Longitude</span>
+                <span className="detail-value">
+                  {Math.abs(observerLocation.lng).toFixed(6)}° {getHemisphere(observerLocation.lng, 'lng')}
+                </span>
+              </div>
+            </div>
 
-        <div className="coordinate-item">
-          <div className="coordinate-label">
-            <span className="coordinate-icon">⛰️</span>
-            Altitude
-          </div>
-          <div className="coordinate-value">
-            {observerLocation.alt.toFixed(0)} meters
-          </div>
-          <div className="coordinate-dms">
-            {observerLocation.alt > 0 ? 'Above sea level' : 'Sea level'}
-          </div>
-        </div>
+            <div className="coordinate-item">
+              <div className="coordinate-detail">
+                <span className="detail-label">Altitude</span>
+                <span className="detail-value">
+                  {observerLocation.alt.toFixed(0)} meters
+                </span>
+              </div>
+            </div>
 
-        <div className="coordinate-item">
-          <div className="coordinate-label">
-            <span className="coordinate-icon">⏰</span>
-            Timezone
+            <div className="coordinate-item">
+              <div className="coordinate-detail">
+                <span className="detail-label">Timezone</span>
+                <span className="detail-value">
+                  {getApproximateTimezone(observerLocation.lng)}
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="coordinate-value">
-            {getApproximateTimezone(observerLocation.lng)}
-          </div>
-          <div className="coordinate-dms">
-            Approximate
-          </div>
-        </div>
-      </div>
 
-      
-
-      {/* Map link */}
-      <div className="map-link">
-        <a 
-          href={`https://www.google.com/maps?q=${observerLocation.lat},${observerLocation.lng}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="map-button"
-        >
-          📍 View on Google Maps
-        </a>
-      </div>
+          <div className="location-actions">
+            <a 
+              href={`https://www.google.com/maps?q=${observerLocation.lat},${observerLocation.lng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="map-button"
+            >
+              View on Google Maps
+            </a>
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -63,7 +63,7 @@ function App() {
             lng: position.coords.longitude,
             alt: position.coords.altitude || 0
           };
-          setObserverLocation(forcedLocation);
+          setObserverLocation(newLocation);
           setLocationError('');
           resolve(newLocation);
         },
