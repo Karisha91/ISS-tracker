@@ -1,0 +1,164 @@
+/* src/components/PassPredictions.css */
+.pass-predictions-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.pass-predictions-card h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  color: #2c3e50;
+}
+
+.pass-subtitle {
+  margin: 0 0 16px 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.loading-passes, .error-message, .no-passes {
+  padding: 20px;
+  text-align: center;
+  color: #7f8c8d;
+}
+
+.error-message {
+  color: #e74c3c;
+}
+
+.passes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pass-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pass-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.pass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.pass-time {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.pass-quality {
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.pass-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pass-detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #7f8c8d;
+}
+
+.detail-value {
+  color: #2c3e50;
+}
+
+.pass-visibility {
+  margin-top: 12px;
+}
+
+.visibility-bar {
+  height: 8px;
+  background-color: #ecf0f1;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.visibility-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.visibility-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+.pass-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.notification-button {
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.notification-button.add {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.notification-button.add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
+
+.notification-button.remove {
+  background: #e0e0e0;
+  color: #7f8c8d;
+}
+
+.notification-button.remove:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+.more-passes {
+  text-align: center;
+  margin-top: 16px;
+  padding: 12px;
+  color: #7f8c8d;
+  font-style: italic;
+  border-top: 1px solid #ecf0f1;
+}
