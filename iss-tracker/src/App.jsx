@@ -3,12 +3,13 @@ import ISSMap from './components/ISSMap';
 import './App.css'
 import ObserverLocation from './components/ObserverLocation';
 import ISSCurrentPosition from './components/ISSCurrentPosition';
-import TLEData from './components/TLEData';
 import { useISSOrbit } from './hooks/useISSOrbit';
 import VisibilityStatus from './components/VisibilityStatus';
 import { calculateRealElevation } from './utils/elevationUtils'; // Import the utility
 import PassPredictions from './components/PassPredictions';
 import YouTubeLive from './components/YouTubeLive.jsx';
+
+
 
 function App() {
   const [issPosition, setIssPosition] = useState({
@@ -61,8 +62,11 @@ function App() {
           const newLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-            alt: position.coords.altitude || 0
+            alt: position.coords.altitude || 0,
+            
+            
           };
+          
           setObserverLocation(newLocation);
           setLocationError('');
           resolve(newLocation);
@@ -74,7 +78,7 @@ function App() {
             lng: -76.014,
             alt: 0
           };
-          setObserverLocation(deultLocation);
+          setObserverLocation(defaultLocation);
           resolve(defaultLocation);
         },
         {
@@ -247,6 +251,7 @@ function App() {
           <div style={{ marginTop: '20px' }}>
             <YouTubeLive />
           </div>
+          
         </div>
       </div>
     </div>

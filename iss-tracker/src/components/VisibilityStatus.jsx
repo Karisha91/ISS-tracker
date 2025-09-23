@@ -36,11 +36,7 @@ const VisibilityStatus = ({ isVisible, issPosition, elevation }) => {
       label: 'Direction',
       value: `${direction} ${arrowIcon}`
     }] : []),
-    {
-      icon: '👀',
-      label: 'Visibility',
-      value: isVisible ? 'Visible' : 'Not Visible'
-    }
+    
   ];
 
   // Viewing tips (only shown when visible)

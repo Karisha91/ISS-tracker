@@ -1,9 +1,9 @@
-// src/components/YouTubeLive.js
+
 import React from 'react';
 import './YouTubeLive.css';
 
 const YouTubeLive = () => {
-  const videoId = "fO9e9jnhYK8"; // ISS Live Stream YouTube Video ID
+  const videoId = "fO9e9jnhYK8"; 
 
   return (
     <div className="youtube-live-card">
