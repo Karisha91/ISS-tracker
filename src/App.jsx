@@ -117,40 +117,43 @@ function App() {
   };
 
   const fetchTLEData = async () => {
-    const proxyUrl = 'https://corsproxy.io/?';
-    const apiUrl = `https://api.n2yo.com/rest/v1/satellite/tle/25544&apiKey=PVE8XA-6MCR8B-SLRNLM-5K7J`;
-
+    // Try free API first (no API key needed)
+    const freeApiUrl = 'https://tle.ivanstanojevic.me/api/tle/25544';
+    
     try {
-      const response = await fetch(encodeURIComponent(apiUrl), {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
+        const response = await fetch(freeApiUrl);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-      });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+        const data = await response.json();
+        
+        // Format to match your expected structure
+        const tleData = {
+            info: {
+                satname: data.name,
+                satid: data.satelliteId,
+                transactionscount: 0
+            },
+            tle: data.line1 + '\r\n' + data.line2
+        };
 
-      const data = await response.json();
-
-      if (data.info && data.tle) {
-        const tleLines = data.tle.split('\r\n');
+        const tleLines = tleData.tle.split('\r\n');
         setIssTle({
-          raw: data.tle,
-          line1: tleLines[0],
-          line2: tleLines[1],
-          info: {
-            satname: data.info.satname,
-            satid: data.info.satid,
-            transactionscount: data.info.transactionscount
-          }
+            raw: tleData.tle,
+            line1: tleLines[0],
+            line2: tleLines[1],
+            info: tleData.info
         });
-        return data;
-      }
+        
+        return tleData;
+        
     } catch (error) {
-      console.error('Error fetching TLE data:', error);
+        console.error('Error fetching TLE data:', error);
+        // You can keep your N2YO API as fallback if you want
     }
-  };
+};
 
   // Update elevation when ISS position or observer location changes
   useEffect(() => {
