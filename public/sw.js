@@ -15,14 +15,13 @@ const staticAssets = [
 ];
 
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installing.');
   event.waitUntil(
     Promise.all([
       caches.open(STATIC_CACHE).then(cache => {
-        console.log('Caching static assets');
+        //console.log('Caching static assets');
         return cache.addAll(staticAssets);
       }).catch(error => {
-        console.error('Cache addAll error:', error);
+        //console.error('Cache addAll error:', error);
       }),
       self.skipWaiting() // Activate immediately
     ])
