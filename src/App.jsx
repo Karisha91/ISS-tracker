@@ -121,7 +121,7 @@ function App() {
     const apiUrl = `https://api.n2yo.com/rest/v1/satellite/tle/25544&apiKey=PVE8XA-6MCR8B-SLRNLM-5K7J`;
 
     try {
-      const response = await fetch(proxyUrl + encodeURIComponent(apiUrl), {
+      const response = await fetch(encodeURIComponent(apiUrl), {
         headers: {
           'X-Requested-With': 'XMLHttpRequest'
         }
