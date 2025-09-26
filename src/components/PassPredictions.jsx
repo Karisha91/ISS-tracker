@@ -1,10 +1,40 @@
 // src/components/PassPredictions.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Box,
+  Paper,
+  Chip,
+  Button,
+  LinearProgress,
+  Alert,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  useTheme,
+  Grid 
+} from '@mui/material';
+import {
+  Schedule as ScheduleIcon,
+  Notifications as NotificationsIcon,
+  NotificationsOff as NotificationsOffIcon,
+  TrendingUp as TrendingUpIcon,
+  AccessTime as AccessTimeIcon,
+  Navigation as NavigationIcon,
+  CalendarToday as CalendarIcon,
+  Warning as WarningIcon,
+  Info as InfoIcon
+} from '@mui/icons-material';
 import { calculatePassPredictions, formatPassTime, getTimeUntil } from '../utils/passPredictionUtils';
 import PassNotification from './PassNotification';
-import './PassPredictions.css';
 
 const PassPredictions = ({ satrec, observerLocation }) => {
+  const theme = useTheme();
   const [passes, setPasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,7 +88,7 @@ const PassPredictions = ({ satrec, observerLocation }) => {
               if (Notification.permission === 'granted') {
                 new Notification('Satellite Pass Alert', {
                   body: `A satellite pass will begin in 5 minutes! Maximum elevation: ${pass.maxElevation}°`,
-                  icon: '/satellite-icon.png' // Optional icon
+                  icon: '/satellite-icon.png'
                 });
               } else if (Notification.permission === 'default') {
                 Notification.requestPermission().then(permission => {
@@ -120,65 +150,153 @@ const PassPredictions = ({ satrec, observerLocation }) => {
 
   // Get pass quality based on elevation
   const getPassQuality = (elevation) => {
-    if (elevation >= 60) return 'excellent';
-    if (elevation >= 30) return 'good';
-    if (elevation >= 15) return 'fair';
-    return 'poor';
+    if (elevation >= 60) return 'Excellent';
+    if (elevation >= 30) return 'Good';
+    if (elevation >= 15) return 'Fair';
+    return 'Poor';
   };
 
   // Get quality color
   const getQualityColor = (quality) => {
     switch (quality) {
-      case 'excellent': return '#27ae60';
-      case 'good': return '#2ecc71';
-      case 'fair': return '#f39c12';
-      case 'poor': return '#e74c3c';
-      default: return '#95a5a6';
+      case 'Excellent': return theme.palette.success.main;
+      case 'Good': return theme.palette.info.main;
+      case 'Fair': return theme.palette.warning.main;
+      case 'Poor': return theme.palette.error.main;
+      default: return theme.palette.text.secondary;
+    }
+  };
+
+  // Get quality icon
+  const getQualityIcon = (quality) => {
+    switch (quality) {
+      case 'Excellent': return '⭐';
+      case 'Good': return '👍';
+      case 'Fair': return '👀';
+      case 'Poor': return '📡';
+      default: return '🛰️';
     }
   };
 
   if (isLoading) {
     return (
-      <div className="pass-predictions-card">
-        <h2>📅 Upcoming Passes</h2>
-        <div className="loading-passes">Calculating pass predictions...</div>
-      </div>
+      <Card 
+        elevation={3}
+        sx={{
+          borderRadius: 2,
+          background: 'linear-gradient(135deg, #1e293b 0%, #1a2436 100%)'
+        }}
+      >
+        <CardHeader
+          title={
+            <Typography variant="h5" component="h2" fontWeight="bold">
+              📅 Upcoming Passes
+            </Typography>
+          }
+          subheader="Calculating satellite pass predictions"
+        />
+        <CardContent>
+          <Box sx={{ textAlign: 'center', py: 4 }}>
+            <Typography variant="body1" color="text.secondary">
+              Calculating pass predictions...
+            </Typography>
+            <LinearProgress sx={{ mt: 2, borderRadius: 1 }} />
+          </Box>
+        </CardContent>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="pass-predictions-card">
-        <h2>📅 Upcoming Passes</h2>
-        <div className="error-message">{error}</div>
-      </div>
+      <Card 
+        elevation={3}
+        sx={{
+          borderRadius: 2,
+          background: 'linear-gradient(135deg, #1e293b 0%, #1a2436 100%)'
+        }}
+      >
+        <CardHeader
+          title={
+            <Typography variant="h5" component="h2" fontWeight="bold">
+              📅 Upcoming Passes
+            </Typography>
+          }
+          subheader="Satellite pass predictions"
+        />
+        <CardContent>
+          <Alert severity="error" sx={{ borderRadius: 2 }}>
+            <Typography variant="body1">{error}</Typography>
+          </Alert>
+        </CardContent>
+      </Card>
     );
   }
 
   if (passes.length === 0) {
     return (
-      <div className="pass-predictions-card">
-        <h2>📅 Upcoming Passes</h2>
-        <div className="no-passes">No visible passes in the next 3 days</div>
-      </div>
+      <Card 
+        elevation={3}
+        sx={{
+          borderRadius: 2,
+          background: 'linear-gradient(135deg, #1e293b 0%, #1a2436 100%)'
+        }}
+      >
+        <CardHeader
+          title={
+            <Typography variant="h5" component="h2" fontWeight="bold">
+              📅 Upcoming Passes
+            </Typography>
+          }
+          subheader="Satellite pass predictions"
+        />
+        <CardContent>
+          <Box sx={{ textAlign: 'center', py: 4 }}>
+            <InfoIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+            <Typography variant="body1" color="text.secondary">
+              No visible passes in the next 3 days
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="pass-predictions-card">
-      <h2>📅 Upcoming Passes</h2>
-      <p className="pass-subtitle">Next 3 days • {passes.length} visible passes</p>
+    <Card 
+      elevation={3}
+      sx={{
+        borderRadius: 2,
+        background: 'linear-gradient(135deg, #1e293b 0%, #1a2436 100%)'
+      }}
+    >
+      <CardHeader
+        title={
+          <Typography variant="h5" component="h2" fontWeight="bold">
+            📅 Upcoming Passes
+          </Typography>
+        }
+        subheader={`Next 3 days • ${passes.length} visible passes`}
+      />
       
-      {/* Notification alerts */}
-      {activeNotifications.map((pass, index) => (
-        <PassNotification
-          key={pass.startTime.getTime()}
-          pass={pass}
-          onDismiss={dismissNotification}
-        />
-      ))}
-      
-      <div className="passes-list">
+      <CardContent>
+        {/* Notification alerts */}
+        {activeNotifications.map((pass, index) => (
+          <PassNotification
+            key={pass.startTime.getTime()}
+            pass={pass}
+            onDismiss={dismissNotification}
+          />
+        ))}
+
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" component="h3" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+            <CalendarIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+            Next 5 Passes
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+        </Box>
+
         {passes.slice(0, 5).map((pass, index) => {
           const passId = pass.startTime.getTime();
           const quality = getPassQuality(pass.maxElevation);
@@ -186,85 +304,176 @@ const PassPredictions = ({ satrec, observerLocation }) => {
           const isNotificationScheduled = scheduledNotifications.has(passId);
           
           return (
-            <div key={index} className="pass-item">
-              <div className="pass-header">
-                <span className="pass-time">
-                  {formatPassTime(pass.startTime)} → {formatPassTime(pass.endTime)}
-                </span>
-                <span 
-                  className="pass-quality"
-                  style={{ backgroundColor: qualityColor }}
-                >
-                  {quality}
-                </span>
-              </div>
-              
-              <div className="pass-details">
-                <div className="pass-detail">
-                  <span className="detail-label">⏱️ When:</span>
-                  <span className="detail-value">{getTimeUntil(pass.startTime)}</span>
-                </div>
+            <Paper
+              key={index}
+              elevation={1}
+              sx={{
+                p: 2,
+                mb: 2,
+                borderRadius: 2,
+                background: `linear-gradient(135deg, ${qualityColor}10, ${qualityColor}05)`,
+                border: `1px solid ${qualityColor}20`
+              }}
+            >
+              {/* Pass Header */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <ScheduleIcon sx={{ mr: 1, color: qualityColor }} />
+                  <Typography variant="h6" fontWeight="bold">
+                    {formatPassTime(pass.startTime)} → {formatPassTime(pass.endTime)}
+                  </Typography>
+                </Box>
+                <Chip
+                  label={quality}
+                  size="small"
+                  sx={{ 
+                    backgroundColor: qualityColor,
+                    color: 'white',
+                    fontWeight: 'bold'
+                  }}
+                  icon={<span>{getQualityIcon(quality)}</span>}
+                />
+              </Box>
+
+              {/* Pass Details Grid */}
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <AccessTimeIcon sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }} />
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        When
+                      </Typography>
+                      <Typography variant="body1" fontWeight="medium">
+                        {getTimeUntil(pass.startTime)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
                 
-                <div className="pass-detail">
-                  <span className="detail-label">📈 Peak:</span>
-                  <span className="detail-value">{pass.maxElevation}° elevation</span>
-                </div>
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <TrendingUpIcon sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }} />
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        Peak Elevation
+                      </Typography>
+                      <Typography variant="body1" fontWeight="medium">
+                        {pass.maxElevation}°
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
                 
-                <div className="pass-detail">
-                  <span className="detail-label">⏰ Duration:</span>
-                  <span className="detail-value">{pass.duration} minutes</span>
-                </div>
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <ScheduleIcon sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }} />
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        Duration
+                      </Typography>
+                      <Typography variant="body1" fontWeight="medium">
+                        {pass.duration} minutes
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
                 
-                <div className="pass-detail">
-                  <span className="detail-label">🧭 Direction:</span>
-                  <span className="detail-value">{pass.direction}</span>
-                </div>
-              </div>
-              
-              <div className="pass-visibility">
-                <div className="visibility-bar">
-                  <div 
-                    className="visibility-fill"
-                    style={{ 
-                      width: `${Math.min(100, pass.maxElevation * 1.2)}%`,
-                      backgroundColor: qualityColor
-                    }}
-                  ></div>
-                </div>
-                <div className="visibility-labels">
-                  <span>Horizon</span>
-                  <span>Overhead</span>
-                </div>
-              </div>
-              
-              <div className="pass-actions">
+                <Grid item xs={12} sm={6}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <NavigationIcon sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }} />
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        Direction
+                      </Typography>
+                      <Typography variant="body1" fontWeight="medium">
+                        {pass.direction}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
+
+              {/* Elevation Visualization */}
+              <Box sx={{ mb: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Horizon
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Overhead
+                  </Typography>
+                </Box>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={Math.min(100, pass.maxElevation * 1.2)}
+                  sx={{
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: theme.palette.grey[800],
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: qualityColor,
+                      borderRadius: 4
+                    }
+                  }}
+                />
+              </Box>
+
+              {/* Notification Button */}
+              <Box sx={{ textAlign: 'center' }}>
                 {isNotificationScheduled ? (
-                  <button 
-                    className="notification-button remove"
+                  <Button
+                    variant="outlined"
+                    color="warning"
+                    startIcon={<NotificationsOffIcon />}
                     onClick={() => removeNotification(passId)}
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 'bold'
+                    }}
                   >
-                    🔕 Remove Notification
-                  </button>
+                    Remove Notification
+                  </Button>
                 ) : (
-                  <button 
-                    className="notification-button add"
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<NotificationsIcon />}
                     onClick={() => addNotification(passId)}
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 'bold',
+                      background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`
+                    }}
                   >
-                    🔔 Notify 5 Min Before
-                  </button>
+                    Notify 5 Minutes Before
+                  </Button>
                 )}
-              </div>
-            </div>
+              </Box>
+            </Paper>
           );
         })}
-      </div>
-      
-      {passes.length > 5 && (
-        <div className="more-passes">
-          +{passes.length - 5} more passes in the next 3 days
-        </div>
-      )}
-    </div>
+
+        {passes.length > 5 && (
+          <Paper
+            elevation={1}
+            sx={{
+              p: 2,
+              textAlign: 'center',
+              borderRadius: 2,
+              background: `linear-gradient(135deg, ${theme.palette.info.light}10, ${theme.palette.info.light}05)`,
+              border: `1px solid ${theme.palette.info.light}20`
+            }}
+          >
+            <Typography variant="body1" color="text.secondary">
+              +{passes.length - 5} more passes in the next 3 days
+            </Typography>
+          </Paper>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

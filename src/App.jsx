@@ -1,14 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
+import {
+  Container,
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  Alert,
+  CircularProgress
+} from '@mui/material';
 import ISSMap from './components/ISSMap';
-import './App.css'
 import ObserverLocation from './components/ObserverLocation';
 import ISSCurrentPosition from './components/ISSCurrentPosition';
 import { useISSOrbit } from './hooks/useISSOrbit';
 import VisibilityStatus from './components/VisibilityStatus';
-import { calculateRealElevation } from './utils/elevationUtils'; // Import the utility
+import { calculateRealElevation } from './utils/elevationUtils';
 import PassPredictions from './components/PassPredictions';
 import YouTubeLive from './components/YouTubeLive.jsx';
-
 
 
 function App() {
@@ -63,10 +70,10 @@ function App() {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
             alt: position.coords.altitude || 0,
-            
-            
+
+
           };
-          
+
           setObserverLocation(newLocation);
           setLocationError('');
           resolve(newLocation);
@@ -119,41 +126,41 @@ function App() {
   const fetchTLEData = async () => {
     // Try free API first (no API key needed)
     const freeApiUrl = 'https://tle.ivanstanojevic.me/api/tle/25544';
-    
+
     try {
-        const response = await fetch(freeApiUrl);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+      const response = await fetch(freeApiUrl);
 
-        const data = await response.json();
-        
-        // Format to match your expected structure
-        const tleData = {
-            info: {
-                satname: data.name,
-                satid: data.satelliteId,
-                transactionscount: 0
-            },
-            tle: data.line1 + '\r\n' + data.line2
-        };
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const tleLines = tleData.tle.split('\r\n');
-        setIssTle({
-            raw: tleData.tle,
-            line1: tleLines[0],
-            line2: tleLines[1],
-            info: tleData.info
-        });
-        
-        return tleData;
-        
+      const data = await response.json();
+
+      // Format to match your expected structure
+      const tleData = {
+        info: {
+          satname: data.name,
+          satid: data.satelliteId,
+          transactionscount: 0
+        },
+        tle: data.line1 + '\r\n' + data.line2
+      };
+
+      const tleLines = tleData.tle.split('\r\n');
+      setIssTle({
+        raw: tleData.tle,
+        line1: tleLines[0],
+        line2: tleLines[1],
+        info: tleData.info
+      });
+
+      return tleData;
+
     } catch (error) {
-        console.error('Error fetching TLE data:', error);
-        // You can keep your N2YO API as fallback if you want
+      console.error('Error fetching TLE data:', error);
+      // You can keep your N2YO API as fallback if you want
     }
-};
+  };
 
   // Update elevation when ISS position or observer location changes
   useEffect(() => {
@@ -190,43 +197,81 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="loading-container">
-        <h1>ISS Tracker</h1>
-        <p>Loading satellite data...</p>
-      </div>
+      <Container maxWidth="lg" sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center'
+      }}>
+        <CircularProgress size={60} thickness={4} sx={{ mb: 3, color: 'primary.main' }} />
+        <Typography variant="h4" component="h1" gutterBottom color="text.primary">
+          🛰️ ISS Tracker
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Loading satellite data...
+        </Typography>
+      </Container>
     );
   }
 
   return (
-    <div className="app-container">
-      <h1>ISS Tracker</h1>
+  <Container maxWidth="xl" sx={{ py: 3, minHeight: '100vh' }}>
+    {/* Header */}
+    <Box sx={{ textAlign: 'center', mb: 4 }}>
+      <Typography 
+        variant="h3" 
+        component="h1" 
+        gutterBottom 
+        sx={{ 
+          fontWeight: 'bold',
+          background: 'linear-gradient(45deg, #60a5fa 30%, #c4b5fd 90%)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+          color: 'transparent'
+        }}
+      >
+        🛰️ ISS Tracker
+      </Typography>
+      <Typography variant="h6" color="text.secondary">
+        Real-time International Space Station Tracking
+      </Typography>
+    </Box>
 
-      {locationError && (
-        <div className="error-banner">
-          <strong>Location Error:</strong> {locationError}
-        </div>
-      )}
+    {/* Error Banner */}
+    {locationError && (
+      <Alert severity="warning" sx={{ mb: 3 }}>
+        <strong>Location Note:</strong> {locationError} - Using default location for demonstration.
+      </Alert>
+    )}
 
-      <div className="main-grid">
-        {/* Left column - Visibility Status */}
-        <div>
-          <div className="data-card">
+    {/* Main Content Grid */}
+    <Grid container spacing={3}>
+      {/* Left Column - Visibility & Predictions */}
+      <Grid item xs={12} lg={4}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
             <VisibilityStatus
               isVisible={isVisible}
               elevation={realElevation}
               issPosition={issPosition}
             />
-          </div>
-          <PassPredictions
-            satrec={satrec}
-            observerLocation={observerLocation}
-          />
+          </Paper>
           
-        </div>
+          <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+            <PassPredictions
+              satrec={satrec}
+              observerLocation={observerLocation}
+            />
+          </Paper>
+        </Box>
+      </Grid>
 
-        {/* Middle column - ISS Position and Observer Location */}
-        <div>
-          <div className="data-card">
+      {/* Middle Column - Position & Observer Info */}
+      <Grid item xs={12} lg={4}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
             <ISSCurrentPosition
               issPosition={issPosition}
               issTle={issTle}
@@ -234,31 +279,39 @@ function App() {
               observerLocation={observerLocation}
               realElevation={realElevation}
             />
-          </div>
+          </Paper>
 
-          <div className="data-card">
+          <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
             <ObserverLocation observerLocation={observerLocation} />
-          </div>
-        </div>
+          </Paper>
+        </Box>
+      </Grid>
 
-        {/* Right column - Map */}
-        <div>
-          <div className="map-container">
-            <ISSMap
-              issPosition={issPosition}
-              observerLocation={observerLocation}
-              orbitPath={orbitPath}
-              isVisible={isVisible}
-            />
-          </div>
-          <div style={{ marginTop: '20px' }}>
+      {/* Right Column - Map & YouTube */}
+      <Grid item xs={12} lg={4}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden', minHeight: 400 }}>
+            <Box sx={{ p: 2 }}>
+              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                🗺️ Live Tracking Map
+              </Typography>
+              <ISSMap
+                issPosition={issPosition}
+                observerLocation={observerLocation}
+                orbitPath={orbitPath}
+                isVisible={isVisible}
+              />
+            </Box>
+          </Paper>
+
+          <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
             <YouTubeLive />
-          </div>
-          
-        </div>
-      </div>
-    </div>
-  );
+          </Paper>
+        </Box>
+      </Grid>
+    </Grid>
+  </Container>
+);
 }
 
 export default App;
