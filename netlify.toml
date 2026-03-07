@@ -2,6 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
+# Don't redirect assets - serve them directly
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+# Redirect all other routes to index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
