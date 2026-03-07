@@ -97,31 +97,88 @@ function App() {
   };
 
   const fetchISSPosition = async () => {
-    const proxyUrl = 'https://corsproxy.io/?';
+  console.log('=== FETCHING ISS POSITION ===');
+  console.log('Observer location:', observerLocation);
+  
+  // Try Open Notify first (no CORS issues)
+  try {
+    console.log('Trying Open Notify API...');
+    const response = await fetch('http://api.open-notify.org/iss-now.json');
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Open Notify success:', data);
+      
+      if (data.iss_position) {
+        const newPosition = {
+          latitude: parseFloat(data.iss_position.latitude),
+          longitude: parseFloat(data.iss_position.longitude),
+          altitude: 408,
+          timestamp: data.timestamp,
+          azimuth: 0,
+          elevation: 0
+        };
+        console.log('Setting ISS position from Open Notify:', newPosition);
+        setIssPosition(newPosition);
+        return;
+      }
+    }
+  } catch (error) {
+    console.log('Open Notify failed:', error.message);
+  }
+  
+  // Try N2YO with proxy if Open Notify fails
+  try {
+    console.log('Trying N2YO with proxy...');
     const { lat, lng, alt } = observerLocation;
     const seconds = 1;
-
-    const apiUrl = `https://api.n2yo.com/rest/v1/satellite/positions/25544/${lat}/${lng}/${alt}/${seconds}/&apiKey=PVE8XA-6MCR8B-SLRNLM-5K7J`;
-
-    try {
-      const response = await fetch(proxyUrl + apiUrl);
-      const data = await response.json();
-
-      if (data.positions && data.positions.length > 0) {
-        const position = data.positions[0];
-        setIssPosition({
-          latitude: position.satlatitude,
-          longitude: position.satlongitude,
-          altitude: position.sataltitude,
-          timestamp: position.timestamp,
-          azimuth: position.azimuth,
-          elevation: position.elevation
-        });
+    const apiKey = 'PVE8XA-6MCR8B-SLRNLM-5K7J';
+    
+    // CORRECT URL FORMAT
+    const apiUrl = `https://api.n2yo.com/rest/v1/satellite/positions/25544/${lat}/${lng}/${alt}/${seconds}/?apiKey=${apiKey}`;
+    
+    // Use multiple proxy options
+    const proxies = [
+      'https://corsproxy.io/?',
+      'https://api.allorigins.win/raw?url=',
+      'https://cors-anywhere.herokuapp.com/'
+    ];
+    
+    for (const proxy of proxies) {
+      try {
+        const fullUrl = proxy + encodeURIComponent(apiUrl);
+        console.log(`Trying proxy ${proxy}`);
+        
+        const response = await fetch(fullUrl);
+        if (!response.ok) continue;
+        
+        const data = await response.json();
+        console.log(`N2YO response from ${proxy}:`, data);
+        
+        if (data.positions && data.positions.length > 0) {
+          const position = data.positions[0];
+          const newPosition = {
+            latitude: position.satlatitude,
+            longitude: position.satlongitude,
+            altitude: position.sataltitude,
+            timestamp: position.timestamp,
+            azimuth: position.azimuth,
+            elevation: position.elevation
+          };
+          console.log('Setting ISS position from N2YO:', newPosition);
+          setIssPosition(newPosition);
+          return;
+        }
+      } catch (proxyError) {
+        console.log(`Proxy ${proxy} failed:`, proxyError.message);
       }
-    } catch (error) {
-      console.error('Error fetching ISS position:', error);
     }
-  };
+  } catch (error) {
+    console.error('All N2YO attempts failed:', error);
+  }
+  
+  console.log('=== FETCH COMPLETE ===');
+};
 
   const fetchTLEData = async () => {
     // Try free API first (no API key needed)
@@ -171,24 +228,31 @@ function App() {
   }, [issPosition, observerLocation]);
 
   useEffect(() => {
-    const initializeApp = async () => {
-      setIsLoading(true);
-      try {
-        await getUserLocation();
-        await fetchTLEData();
-        await fetchISSPosition();
-      } catch (error) {
-        console.error('Initialization error:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const initializeApp = async () => {
+    setIsLoading(true);
+    try {
+      await getUserLocation();
+      await fetchTLEData();
+    } catch (error) {
+      console.error('Initialization error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    initializeApp();
+  initializeApp();
+}, []); // Empty dependency array - runs once on mount
 
-    const positionInterval = setInterval(fetchISSPosition, 5000);
-    return () => clearInterval(positionInterval);
-  }, []);
+// Separate useEffect for fetching ISS position after we have observer location
+useEffect(() => {
+  if (observerLocation.lat !== 0 || observerLocation.lng !== 0) {
+    console.log('Observer location ready, fetching ISS position');
+    fetchISSPosition();
+    
+    const interval = setInterval(fetchISSPosition, 5000);
+    return () => clearInterval(interval);
+  }
+}, [observerLocation]); // Run when observerLocation changes
 
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return 'N/A';
