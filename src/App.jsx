@@ -96,88 +96,25 @@ function App() {
     });
   };
 
-  const fetchISSPosition = async () => {
-  console.log('=== FETCHING ISS POSITION ===');
-  console.log('Observer location:', observerLocation);
-  
-  // Try Open Notify first (no CORS issues)
+const fetchISSPosition = async () => {
   try {
-    console.log('Trying Open Notify API...');
-    const response = await fetch('https://api.open-notify.org/iss-now.json');
+    // Simple fetch - no proxy, no API key, no CORS issues
+    const response = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+    const data = await response.json();
     
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Open Notify success:', data);
-      
-      if (data.iss_position) {
-        const newPosition = {
-          latitude: parseFloat(data.iss_position.latitude),
-          longitude: parseFloat(data.iss_position.longitude),
-          altitude: 408,
-          timestamp: data.timestamp,
-          azimuth: 0,
-          elevation: 0
-        };
-        console.log('Setting ISS position from Open Notify:', newPosition);
-        setIssPosition(newPosition);
-        return;
-      }
-    }
+    // Set the position - that's it!
+    setIssPosition({
+      latitude: data.latitude,
+      longitude: data.longitude,
+      altitude: data.altitude,
+      timestamp: Math.floor(Date.now() / 1000)
+    });
+    
+    console.log('ISS position updated:', data.latitude, data.longitude);
+    
   } catch (error) {
-    console.log('Open Notify failed:', error.message);
+    console.error('Failed to fetch ISS position:', error);
   }
-  
-  // Try N2YO with proxy if Open Notify fails
-  try {
-    console.log('Trying N2YO with proxy...');
-    const { lat, lng, alt } = observerLocation;
-    const seconds = 1;
-    const apiKey = 'PVE8XA-6MCR8B-SLRNLM-5K7J';
-    
-    // CORRECT URL FORMAT
-    const apiUrl = `https://api.n2yo.com/rest/v1/satellite/positions/25544/${lat}/${lng}/${alt}/${seconds}/?apiKey=${apiKey}`;
-    
-    // Use multiple proxy options
-    const proxies = [
-      'https://corsproxy.io/?',
-      'https://api.allorigins.win/raw?url=',
-      'https://cors-anywhere.herokuapp.com/'
-    ];
-    
-    for (const proxy of proxies) {
-      try {
-        const fullUrl = proxy + encodeURIComponent(apiUrl);
-        console.log(`Trying proxy ${proxy}`);
-        
-        const response = await fetch(fullUrl);
-        if (!response.ok) continue;
-        
-        const data = await response.json();
-        console.log(`N2YO response from ${proxy}:`, data);
-        
-        if (data.positions && data.positions.length > 0) {
-          const position = data.positions[0];
-          const newPosition = {
-            latitude: position.satlatitude,
-            longitude: position.satlongitude,
-            altitude: position.sataltitude,
-            timestamp: position.timestamp,
-            azimuth: position.azimuth,
-            elevation: position.elevation
-          };
-          console.log('Setting ISS position from N2YO:', newPosition);
-          setIssPosition(newPosition);
-          return;
-        }
-      } catch (proxyError) {
-        console.log(`Proxy ${proxy} failed:`, proxyError.message);
-      }
-    }
-  } catch (error) {
-    console.error('All N2YO attempts failed:', error);
-  }
-  
-  console.log('=== FETCH COMPLETE ===');
 };
 
   const fetchTLEData = async () => {
