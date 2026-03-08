@@ -12,4 +12,4 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200npo
+  status = 200  # ← REMOVE "npo", just "200"
