@@ -3,11 +3,9 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  publicDir: 'public',
-  base: './', // ← ADD THIS ONE LINE (THIS IS THE MAGIC)
+  publicDir: 'public', 
   build: {
     outDir: 'dist',
-    copyPublicDir: true,
-    assetsDir: 'assets', // ← ADD THIS FOR GOOD MEASURE
+    copyPublicDir: true 
   }
 })
