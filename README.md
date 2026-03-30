@@ -1,12 +1,48 @@
-# React + Vite
+# ISS Tracker 🛸
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time International Space Station tracker built with React. 
+Track the ISS live on an interactive map, view its trajectory, 
+and calculate upcoming passes over your location.
 
-Currently, two official plugins are available:
+🔗 **Live Demo:** [capable-douhua-da3731.netlify.app](https://capable-douhua-da3731.netlify.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Screenshots
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+> Add screenshots here
+
+---
+
+## Features
+
+- 🌍 Live ISS position tracking on an interactive map
+- 📡 Real-time trajectory visualization using orbital mechanics
+- 📍 Upcoming pass predictions based on observer location
+- 🗺️ Interactive map powered by React Leaflet
+
+---
+
+## Tech Stack
+
+- React 19
+- Vite
+- React Leaflet (interactive maps)
+- satellite.js (orbital calculations)
+- Material UI (MUI)
+- Netlify (deployment)
+
+---
+
+## Repository
+
+- [github.com/Karisha91/ISS-tracker](https://github.com/Karisha91/ISS-tracker)
+
+---
+
+## Author
+
+Ivan — Career changer from retail management to full-stack development.
+Self-taught, 8 months of coding experience.
+
+- GitHub: [github.com/Karisha91](https://github.com/Karisha91)
